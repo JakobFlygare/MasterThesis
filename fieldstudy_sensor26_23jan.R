@@ -1,5 +1,8 @@
 #Fältstudie 2018-01-23 första sensor försöket nummer 26.
+install.packages("plyr")
+install.packages("ggplot2")
 library(plyr)
+library(ggplot2)
 
 #Läsa in filen
 sensor26jan23 <- read.csv("queryResults-23-jan.csv", header = FALSE) 
@@ -25,3 +28,7 @@ address23jan <- subset(testdata, Address == "eb087a24b4d40bdf00c5f6d14924ac44adb
 
 #Söka pingfrekvens för andra enheter
 address <- "c7824f65bad4a1d550df91951c1e27ec91a238e7"
+mostCommonDevice <- subset(sensor26jan23, Address == "c7824f65bad4a1d550df91951c1e27ec91a238e7")
+
+ggplot(sensor26jan23,aes(Time))+geom_histogram(binwidth = 200)
+ggplot(sensor26jan23,aes(RSSI))+geom_histogram()
