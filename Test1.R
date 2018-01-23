@@ -1,5 +1,3 @@
-#Test
-jakob <- 2 
+#Fältstudie 2018-01-23 första sensor försöket nummer 26.
 
-hej<- 3
 
