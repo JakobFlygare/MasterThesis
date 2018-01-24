@@ -1,9 +1,10 @@
 #Fältstudie 2018-01-23 första sensor försöket nummer 26.
 install.packages("plyr")
 install.packages("ggplot2")
+install.packages("lubridate")
 library(plyr)
 library(ggplot2)
-
+library(lubridate)
 #Läsa in filen
 sensor26jan23 <- read.csv("queryResults-23-jan.csv", header = FALSE) 
 colnames(sensor26jan23) <- c("ID","Sensor Code","Time","Address","RSSI","OUI","TS_PARSED")
@@ -32,3 +33,7 @@ mostCommonDevice <- subset(sensor26jan23, Address == "c7824f65bad4a1d550df91951c
 
 ggplot(sensor26jan23,aes(Time))+geom_histogram(binwidth = 200)
 ggplot(sensor26jan23,aes(RSSI))+geom_histogram()
+
+#Adding hours as a column
+sensor26jan23hours<- cbind(sensor26jan23,hour(as.POSIXct(sensor26jan23[,7])))
+
