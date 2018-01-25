@@ -1,7 +1,6 @@
 #Fältstudie 2018-01-23 första sensor försöket nummer 26.
 #install.packages("tidyverse")
 library(tidyverse)
-
 #Läsa in filen
 sensor26jan23 <- read.csv("queryResults-23-jan.csv", header = FALSE) 
 colnames(sensor26jan23) <- c("ID","Sensor Code","Time","Address","RSSI","OUI","TS_PARSED")
@@ -16,7 +15,9 @@ simondata <- subset(sensor26jan23,Address == Simon)
 JakobMacBook <- "5073d1ff497821b2469d8e7c5c48a4467b013f15"
 jakobdata <- subset(sensor26jan23,Address == JakobMacBook)
 
-ggplot(simondata,aes(x=TS_PARSED, y=RSSI, size=RSSI))+geom_point(color="darkblue")
+daytime <- as.POSIXct(simondata$TS_PARSED) + 3600
+ggplot(simondata,aes(daytime + 3600, RSSI))+geom_point(color="darkblue") + 
+  scale_x_datetime(date_label = "%H:%M")+xlab(" ")
 
 #Identify our devices and common devices in the data sets
 idphase_address <- count(idphase,"Address")
