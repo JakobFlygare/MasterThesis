@@ -11,11 +11,10 @@ pingrasp <- raspdata %>%
 
 ggplot(pingrasp,aes(TimeLag)) + geom_histogram(binwidth=10) +xlab("Time between pings(sec)") +
   ylab("Count") +ggtitle("Histogram over time between pings from same device")
-# fasd
+
 mean(pingrasp$TimeLag)
 median(pingrasp$TimeLag)
 summary(pingrasp$TimeLag)
-#test4
 
 #Calculating how often a device is pinged in a 5-minute window
 intrvl <- 300 #interval set to 5 minutes
