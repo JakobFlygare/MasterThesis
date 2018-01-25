@@ -15,8 +15,6 @@ ggplot(pingrasp,aes(TimeLag)) + geom_histogram(binwidth=10) +xlab("Time between 
 mean(pingrasp$TimeLag)
 median(pingrasp$TimeLag)
 summary(pingrasp$TimeLag)
-#sfalkdsflkjkl
-#ASF
 
 #Calculating how often a device is pinged in a 5-minute window
 intrvl <- 300 #interval set to 5 minutes
@@ -32,7 +30,5 @@ nrpings <- pingrasp %>%
 ggplot(nrpings,aes(frequency)) + geom_bar() +xlab("Nr of pings within 5 minutes") +
   ylab("Count") +ggtitle("Histogram for amount of pings for a device during a time period")
 
-#DET HÄR ÄR NYTT
 
-#HÄR KOMMER EN NY IGEN
-  
+#SIMON SE DEAT HÄR FÖR I HELVETE
