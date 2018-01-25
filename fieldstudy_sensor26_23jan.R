@@ -1,8 +1,5 @@
 #Fältstudie 2018-01-23 första sensor försöket nummer 26.
-install.packages("tidyverse")
-install.packages("plyr")
-install.packages("ggplot2")
-install.packages("lubridate")
+#install.packages("tidyverse")
 library(tidyverse)
 
 #Läsa in filen
@@ -19,7 +16,7 @@ simondata <- subset(sensor26jan23,Address == Simon)
 JakobMacBook <- "5073d1ff497821b2469d8e7c5c48a4467b013f15"
 jakobdata <- subset(sensor26jan23,Address == JakobMacBook)
 
-ggplot(simondata,aes(x=TS_PARSED, y=RSSI, size=RSSI))+geom_point()
+ggplot(simondata,aes(x=TS_PARSED, y=RSSI, size=RSSI))+geom_point(color="darkblue")
 
 #Identify our devices and common devices in the data sets
 idphase_address <- count(idphase,"Address")
