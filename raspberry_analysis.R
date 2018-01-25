@@ -16,6 +16,7 @@ mean(pingrasp$TimeLag)
 median(pingrasp$TimeLag)
 summary(pingrasp$TimeLag)
 #sfalkdsflkjkl
+#ASF
 
 #Calculating how often a device is pinged in a 5-minute window
 intrvl <- 300 #interval set to 5 minutes
