@@ -30,4 +30,6 @@ nrpings <- pingrasp %>%
 
 ggplot(nrpings,aes(frequency)) + geom_bar() +xlab("Nr of pings within 5 minutes") +
   ylab("Count") +ggtitle("Histogram for amount of pings for a device during a time period")
+
+#DET HÄR ÄR NYTT YOPOOOO
   
