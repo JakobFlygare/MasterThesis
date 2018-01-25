@@ -1,10 +1,10 @@
 #Fältstudie 2018-01-23 första sensor försöket nummer 26.
+install.packages("tidyverse")
 install.packages("plyr")
 install.packages("ggplot2")
 install.packages("lubridate")
-library(plyr)
-library(ggplot2)
-library(lubridate)
+library(tidyverse)
+
 #Läsa in filen
 sensor26jan23 <- read.csv("queryResults-23-jan.csv", header = FALSE) 
 colnames(sensor26jan23) <- c("ID","Sensor Code","Time","Address","RSSI","OUI","TS_PARSED")
@@ -18,6 +18,8 @@ Simon <- "e581d79354d73e465709e1bd0282c702e7d45395"
 simondata <- subset(sensor26jan23,Address == Simon)
 JakobMacBook <- "5073d1ff497821b2469d8e7c5c48a4467b013f15"
 jakobdata <- subset(sensor26jan23,Address == JakobMacBook)
+
+ggplot(simondata,aes(x=TS_PARSED, y=RSSI, size=RSSI))+geom_point()
 
 #Identify our devices and common devices in the data sets
 idphase_address <- count(idphase,"Address")
