@@ -27,10 +27,10 @@ intrvl = 300
 ping_freq <- onlyIdent %>%
   group_by(Address) %>%
   mutate(interval = floor((Time - min(Time))/intrvl)+1) %>%
-  group_by(interval, add = TRUE) %>%
+  group_by(interval, add = TRUE) #%>%
   summarize(startDate = min(Time),
             endDate = (startDate + intrvl -1),
-            frequency = n()) %>%
+            frequency = n()) #%>%
   select(-interval)
 
 ggplot(ping_freq, aes(frequency))+geom_bar()
