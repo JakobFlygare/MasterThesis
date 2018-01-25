@@ -32,3 +32,5 @@ ggplot(nrpings,aes(frequency)) + geom_bar() +xlab("Nr of pings within 5 minutes"
 
 
 #SIMON SE DEAT HÄR FÖR I HELVETE
+
+#RAD 36 är fett snygg
