@@ -3,7 +3,7 @@
 library(tidyverse)
 #Läsa in filen
 sensor26jan23 <- read.csv("queryResults-23-jan.csv", header = FALSE) 
-colnames(sensor26jan23) <- c("ID","Sensor Code","Time","Address","RSSI","OUI","TS_PARSED")
+colnames(sensor26jan23) <- c("ID","Sensor_Code","Time","Address","RSSI","OUI","TS_PARSED")
 testdata <- subset(sensor26jan23,Time >=1516698600 & Time <=1516705200)
 idphase <- subset(sensor26jan23,Time >= 1516703500 & Time <=1516703680)
 uniqueOUI <- count(idphase,"OUI")
