@@ -1,7 +1,9 @@
 #Obtain data points between a certain interval of time
 library(tidyverse)
+library(lubridate)
 datafile<- read.csv("queryResults-23-jan.csv", header = FALSE) 
 colnames(datafile) <- c("ID","Sensor_Code","Time","Address","RSSI","OUI","TS_PARSED")
+datafile$TS_PARSED <- as.POSIXct(datafile$TS_PARSED) + 3600
 
 #Specify the parameters of the data filtering
 address <- "e581d79354d73e465709e1bd0282c702e7d45395"
@@ -27,13 +29,17 @@ ggplot(time_window,aes(x= daytime + 3600, y = RSSI, colour = factor(Sensor_Code)
   scale_x_datetime(date_label = "%H:%M")+labs(x= " ",colour='Sensor')
 
 #Compute variance for a sensor at a given range
+int1=ymd_hms("2018-01-23 14:02:24")
+int2=ymd_hms("2018-01-23 15:02:24")
+inttest=ymd_hms("2018-01-23 14:22:24")
+
 var_distance <-
   datafile %>%
-  filter(Address == address & as.POSIXct(TS_PARSED) > starttime & as.POSIXct(TS_PARSED) < endtime & Sensor_Code == '300') %>%
+  filter(Address == address) %>%
   arrange(Time) %>%
   select(Sensor_Code,RSSI, Time, TS_PARSED) %>%
-  mutate(Variance = var(RSSI)) %>%
-  mutate(Distance = distance)
+  group_by(as.POSIXct(TS_PARSED)  %within% interval(ymd_hms(variance_test$Starttime),ymd_hms(variance_test$Endtime))) %>%
+  add_tally()
   
 ggplot(aes(RSSI), data = var_distance) + geom_histogram(binwidth = 10)+
   xlab("RSSI")+ylab("Count")  
