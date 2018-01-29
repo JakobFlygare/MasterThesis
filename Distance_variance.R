@@ -34,7 +34,7 @@ var_distance <-
   arrange(Time) %>%
   select(Sensor_Code,RSSI, Time, TS_PARSED)
 
-  
+#Add distance from time interval in test data
 for (i in 1:length(Variance_distance$Starttime)){
   for (n in 1:length(var_distance$TS_PARSED)){
     if (as.POSIXct(var_distance$TS_PARSED[n])>as.POSIXct(Variance_distance$Starttime[i]) & as.POSIXct(var_distance$TS_PARSED[n])<as.POSIXct(Variance_distance$Endtime[i])){
