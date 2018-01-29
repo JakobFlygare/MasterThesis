@@ -2,6 +2,7 @@
 library(tidyverse)
 datafile<- read.csv("queryResults-23-jan.csv", header = FALSE) 
 colnames(datafile) <- c("ID","Sensor_Code","Time","Address","RSSI","OUI","TS_PARSED")
+datafile$TS_PARSED = as.POSIXct(datafile$TS_PARSED,origin="UTC")+3600 
 
 #Specify the parameters of the data filtering
 address <- "e581d79354d73e465709e1bd0282c702e7d45395"
@@ -31,10 +32,17 @@ var_distance <-
   datafile %>%
   filter(Address == address & as.POSIXct(TS_PARSED) > starttime & as.POSIXct(TS_PARSED) < endtime & Sensor_Code == '300') %>%
   arrange(Time) %>%
-  select(Sensor_Code,RSSI, Time, TS_PARSED) %>%
-  mutate(Variance = var(RSSI)) %>%
-  mutate(Distance = distance)
+  select(Sensor_Code,RSSI, Time, TS_PARSED)
+
   
+for (i in 1:length(Variance_distance$Starttime)){
+  for (n in 1:length(var_distance$TS_PARSED)){
+    if (as.POSIXct(var_distance$TS_PARSED[n])>as.POSIXct(Variance_distance$Starttime[i]) & as.POSIXct(var_distance$TS_PARSED[n])<as.POSIXct(Variance_distance$Endtime[i])){
+      var_distance$Distance[n] = Variance_distance$Distance[i] 
+    }
+  }
+}
+
 ggplot(aes(RSSI), data = var_distance) + geom_histogram(binwidth = 10)+
   xlab("RSSI")+ylab("Count")  
 
