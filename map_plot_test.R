@@ -17,3 +17,21 @@ ggmap(mapgilbert) +
   geom_point(data = df, aes(x = lon, y = lat, fill = "red", alpha = 0.8), size = 3, shape = 21) +
   guides(fill=FALSE, alpha=FALSE, size=FALSE)
 
+
+houston <- get_map("houston", zoom = 14)
+HoustonMap <- ggmap("houston", extent = "device", legend = "topleft")
+HoustonMap +
+  stat_density2d(
+    aes(x = lon, y = lat, fill = ..level..,  alpha = ..level..),
+    size = 2, bins = 4, data = violent_crimes,
+    geom = "polygon"
+  )
+overlay <- stat_density2d(
+  aes(x = lon, y = lat, fill = ..level.., alpha = ..level..),
+  bins = 4, geom = "polygon",
+  data = violent_crimes
+)
+HoustonMap + overlay + inset(
+  grob = ggplotGrob(ggplot() + overlay + theme_inset()),
+  xmin = -95.35836, xmax = Inf, ymin = -Inf, ymax = 29.75062
+)
