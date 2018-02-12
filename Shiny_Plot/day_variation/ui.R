@@ -7,7 +7,7 @@ shinyUI(fluidPage(
     #Sidebar panel
     sidebarPanel(
       checkboxGroupInput("sensor","Sensors to show",choices = c("200"="200","300"="300"),selected="300"),
-      br(),
+      br("View settings"),
       checkboxInput("confbars","Confidence interval",TRUE),
       checkboxInput("stdsmooth","Standard deviation region",TRUE)),
     

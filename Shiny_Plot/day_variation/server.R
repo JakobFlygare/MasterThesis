@@ -1,8 +1,8 @@
-setwd("/Users/jakob/Documents/R/MasterThesis/Shiny_Jakob/day_variation")
+#setwd("/Users/jakob/Documents/R/MasterThesis/Shiny_Plot/day_variation")
 library(shiny)
 library(tidyverse)
 ## RUN OTHER SCRIPT BEFORE TO GENERATE DATA ##
-source("visualization/plot_trend_lines.R")
+#source("Visualization/plot_trend_lines.R")
 shinyServer(
   function(input, output){
     
