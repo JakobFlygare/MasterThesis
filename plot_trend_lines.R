@@ -1,7 +1,8 @@
 #Plot trend for number of unique individuals over time
 library(tidyverse)
+library(scales)
 
-s200_300 <- read.csv("s200_300_180117_180208.csv",header=FALSE)
+s200_300 <- read.csv("Sensor_Data/s200_300_180117_180208.csv",header=FALSE)
 colnames(s200_300) <- c("ID","Sensor_Code","Time","Address","RSSI","OUI","TS_PARSED")
 
 #Filter addresses which is not identified 
@@ -29,6 +30,7 @@ mean_sd_num_hr<- uniq_per_day_hour%>%
 #Plot the mean and 95% confidence interval for average number of unique devices every hour of the day
 ggplot(mean_sd_num_hr, aes(x=h, y=mean_num, colour=factor(Sensor_Code),group=Sensor_Code)) + 
   geom_errorbar(aes(ymin=mean_num-ci, ymax=mean_num+ci), width=0.5) +
+  geom_smooth()+
   geom_line() +
   geom_point() +
   xlab("Hour of the Day") +
@@ -36,16 +38,22 @@ ggplot(mean_sd_num_hr, aes(x=h, y=mean_num, colour=factor(Sensor_Code),group=Sen
   scale_colour_discrete(name  ="Sensor Code")
 
 #Bar plot for number of unique devices per day and hour for both sensors
-ggplot(uniq_per_day_hour,aes(x=day_hr, y=u_num,colour = factor(Sensor_Code)))+
-  geom_bar(stat="identity",fill="white") +
+uniq_per_day_hour$day = substr(uniq_per_day_hour$day_hr,9,10)
+ggplot(subset(uniq_per_day_hour,Sensor_Code %in% c("300")),aes(x=as.POSIXct(day), y=u_num))+
+  #geom_bar(stat="identity") +
+  #geom_smooth(se=FALSE)+
+  geom_line()+
   scale_colour_discrete(name  ="Sensor Code")+
   xlab("Day and Hour")+
   ylab("Number of Unique Devices")
 
-#Not finished plot. Want to show line for all devices and unique devices in same plot
+#Want to show line for all devices and unique devices in same plot
+uniq_per_day_hour$day_hr = as.Date(uniq_per_day_hour$day_hr)
 ggplot(subset(uniq_per_day_hour,Sensor_Code %in% c("200")),aes(x=day_hr,group=Sensor_Code))+
-  geom_line(aes(y=num,colour = "All Devices"))+
+  #geom_line(aes(y=num,colour = "All Devices"))+
   geom_line(aes(y=u_num,colour = "Unique Devices"))+
+  scale_x_date(labels = date_format("%d/%m"))+
+  theme(axis.text.x = element_text(angle=45))+
   xlab("Day and Hour")+
   ylab("Number of Pings")+
   scale_colour_discrete(name  =" ")
