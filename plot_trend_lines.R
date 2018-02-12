@@ -36,13 +36,17 @@ ggplot(mean_sd_num_hr, aes(x=h, y=mean_num, colour=factor(Sensor_Code),group=Sen
   scale_colour_discrete(name  ="Sensor Code")
 
 #Bar plot for number of unique devices per day and hour for both sensors
-ggplot(uniq_per_day_hour,aes(x=day_hr, y=num,colour = factor(Sensor_Code)))+
+ggplot(uniq_per_day_hour,aes(x=day_hr, y=u_num,colour = factor(Sensor_Code)))+
   geom_bar(stat="identity",fill="white") +
   scale_colour_discrete(name  ="Sensor Code")+
   xlab("Day and Hour")+
   ylab("Number of Unique Devices")
 
 #Not finished plot. Want to show line for all devices and unique devices in same plot
-ggplot(uniq_per_day_hour,aes(x=day_hr,group=Sensor_Code))+
+ggplot(subset(uniq_per_day_hour,Sensor_Code %in% c("200")),aes(x=day_hr,group=Sensor_Code))+
   geom_line(aes(y=num,colour = "All Devices"))+
-  geom_line(aes(y=u_num,colour = "Unique Devices"))
+  geom_line(aes(y=u_num,colour = "Unique Devices"))+
+  xlab("Day and Hour")+
+  ylab("Number of Pings")+
+  scale_colour_discrete(name  =" ")
+
