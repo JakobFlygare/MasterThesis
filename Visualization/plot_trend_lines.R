@@ -1,6 +1,8 @@
 #Plot trend for number of unique individuals over time
 library(tidyverse)
+library(lubridate)
 library(scales)
+library(zoo)
 
 s200_300 <- read.csv("Sensor_Data/s200_300_180117_180208.csv",header=FALSE)
 colnames(s200_300) <- c("ID","Sensor_Code","Time","Address","RSSI","OUI","TS_PARSED")
@@ -10,7 +12,9 @@ filter_data <- s200_300 %>%
   filter(as.character(OUI) != as.character(Address)) 
 
 #Add column with day and hour
+filter_data$day_hr_min <- substr(filter_data$TS_PARSED, 1, 15)
 filter_data$day_hr <- substr(filter_data$TS_PARSED, 1, 13)
+filter_data$day <- substr(filter_data$TS_PARSED, 1, 10)
 
 #Count number of unique devices within each day and hour for the sensors
 uniq_per_day_hour <- filter_data %>% 
@@ -37,24 +41,40 @@ ggplot(mean_sd_num_hr, aes(x=h, y=mean_num, colour=factor(Sensor_Code),group=Sen
   ylab("Average Number of Unique Devices")+
   scale_colour_discrete(name  ="Sensor Code")
 
-#Bar plot for number of unique devices per day and hour for both sensors
-uniq_per_day_hour$day = substr(uniq_per_day_hour$day_hr,9,10)
-ggplot(subset(uniq_per_day_hour,Sensor_Code %in% c("300")),aes(x=as.POSIXct(day), y=u_num))+
-  #geom_bar(stat="identity") +
+mean_two_h = rollmean(uniq_per_day_hour$u_num,k=2)
+
+ggplot(subset(uniq_per_day_hour,Sensor_Code %in% c("300")),aes(mean_two_h))+
+  #geom_histogram(stat="identity") +
   #geom_smooth(se=FALSE)+
   geom_line()+
   scale_colour_discrete(name  ="Sensor Code")+
   xlab("Day and Hour")+
   ylab("Number of Unique Devices")
 
-#Want to show line for all devices and unique devices in same plot
-uniq_per_day_hour$day_hr = as.Date(uniq_per_day_hour$day_hr)
-ggplot(subset(uniq_per_day_hour,Sensor_Code %in% c("200")),aes(x=day_hr,group=Sensor_Code))+
-  #geom_line(aes(y=num,colour = "All Devices"))+
-  geom_line(aes(y=u_num,colour = "Unique Devices"))+
-  scale_x_date(labels = date_format("%d/%m"))+
-  theme(axis.text.x = element_text(angle=45))+
-  xlab("Day and Hour")+
-  ylab("Number of Pings")+
-  scale_colour_discrete(name  =" ")
 
+#Create number of unique and all pinged devices for each day
+uniq_per_day <- filter_data %>% 
+  select(day,Address,Sensor_Code) %>% 
+  group_by(day,Sensor_Code) %>% 
+  summarise(num = n(),u_num=n_distinct(Address))
+
+#Plot number of unique devices for each day
+ggplot(uniq_per_day, aes(x=as.Date(day),y=u_num,group = Sensor_Code,colour = factor(Sensor_Code)))+
+  geom_point()+
+  geom_line()+
+  scale_x_date(labels = date_format("%d/%m"))+
+  theme(axis.text.x = element_text(angle=90))+
+  xlab("Day")+
+  ylab("Number of Unique Devices")+
+  scale_colour_discrete(name  ="Sensor_Code")
+
+#Distribution for each day in the data, binwidth 600 = 10 min
+ggplot(filter_data,aes(as_datetime(Time))) +
+  geom_freqpoly(binwidth = 600)
+
+#Some kind of distribution over the day for all days in the data
+filter_data %>%
+  mutate(TS_time = update(as.POSIXct(TS_PARSED), yday = 1)) %>%
+  distinct(Address,.keep_all = TRUE)%>%
+  ggplot(aes(TS_time)) +
+  geom_freqpoly(binwidth = 300)
