@@ -3,7 +3,7 @@ install.packages("data.table")
 library(tidyverse)
 require(data.table)
 
-s200_300 <- read.csv("Sensor Data/s200_300_20180210.csv",header=FALSE)
+s200_300 <- read.csv("Sensor_Data/s200_300_20180210.csv",header=FALSE)
 colnames(s200_300) <- c("ID","Sensor_Code","Time","Address","RSSI","OUI","TS_PARSED")
 
 

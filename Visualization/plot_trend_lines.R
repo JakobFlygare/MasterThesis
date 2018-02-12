@@ -39,9 +39,9 @@ ggplot(mean_sd_num_hr, aes(x=h, y=mean_num, colour=factor(Sensor_Code),group=Sen
 
 #Bar plot for number of unique devices per day and hour for both sensors
 uniq_per_day_hour$day = substr(uniq_per_day_hour$day_hr,9,10)
-ggplot(subset(uniq_per_day_hour,Sensor_Code %in% c("300")),aes(x=as.POSIXct(day), y=u_num))+
-  #geom_bar(stat="identity") +
-  #geom_smooth(se=FALSE)+
+ggplot(subset(uniq_per_day_hour,Sensor_Code %in% c("300")),aes(x=day_hr, y=u_num))+
+  geom_bar(stat="identity") +
+  theme(axis.text.x = element_text(angle=90))+
   geom_line()+
   scale_colour_discrete(name  ="Sensor Code")+
   xlab("Day and Hour")+

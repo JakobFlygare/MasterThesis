@@ -1,6 +1,7 @@
 #Chord diagram for flow of people between sensors 
 install.packages("devtools")
 library(chorddiag)
+devtools::install_github("mattflor/chorddiag")
 
 #Read in file
 s200_300 <- read.csv("s200_300_180117_180208.csv",header=FALSE)
