@@ -1,9 +1,10 @@
 #Chord diagram for flow of people between sensors 
-install.packages("devtools")
+
+#install.packages("devtools")
 library(chorddiag)
 
 #Read in file
-s200_300 <- read.csv("s200_300_180117_180208.csv",header=FALSE)
+s200_300 <- read.csv("Sensor_Data/s200_300_180117_180208.csv",header=FALSE)
 colnames(s200_300) <- c("ID","Sensor_Code","Time","Address","RSSI","OUI","TS_PARSED")
 
 #Filter addresses which is not identified 
