@@ -1,8 +1,10 @@
 #Plot trend for number of unique individuals over time
+install.packages("ggfortify")
 library(tidyverse)
 library(lubridate)
 library(scales)
 library(zoo)
+library(ggfortify)
 
 s200_300 <- read.csv("Sensor_Data/s200_300_180117_180208.csv",header=FALSE)
 colnames(s200_300) <- c("ID","Sensor_Code","Time","Address","RSSI","OUI","TS_PARSED")
@@ -68,13 +70,23 @@ ggplot(uniq_per_day, aes(x=as.Date(day),y=u_num,group = Sensor_Code,colour = fac
   ylab("Number of Unique Devices")+
   scale_colour_discrete(name  ="Sensor_Code")
 
+#Specify plot time frame
+time_frame=c(as.POSIXct('2018-01-19 13:08:00', format="%Y-%m-%d %H:%M:%S"),
+             as.POSIXct('2018-01-20 13:08:00', format="%Y-%m-%d %H:%M:%S"))
+
 #Distribution for each day in the data, binwidth 600 = 10 min
-ggplot(filter_data,aes(as_datetime(Time))) +
-  geom_freqpoly(binwidth = 600)
+filter_data %>%
+  distinct(Address,.keep_all = TRUE)%>%
+  ggplot(aes(as.POSIXct(TS_PARSED))) +
+  geom_freqpoly(binwidth = 600)+
+  (scale_x_datetime(limits=time_frame))
 
 #Some kind of distribution over the day for all days in the data
+
 filter_data %>%
   mutate(TS_time = update(as.POSIXct(TS_PARSED), yday = 1)) %>%
   distinct(Address,.keep_all = TRUE)%>%
   ggplot(aes(TS_time)) +
   geom_freqpoly(binwidth = 300)
+
+autoplot(ts(filter_data$TS_PARSED))
