@@ -71,8 +71,8 @@ ggplot(uniq_per_day, aes(x=as.Date(day),y=u_num,group = Sensor_Code,colour = fac
   scale_colour_discrete(name  ="Sensor_Code")
 
 #Specify plot time frame
-time_frame=c(as.POSIXct('2018-01-19 13:08:00', format="%Y-%m-%d %H:%M:%S"),
-             as.POSIXct('2018-01-20 13:08:00', format="%Y-%m-%d %H:%M:%S"))
+time_frame=c(as.POSIXct('2018-01-20 00:00:00', format="%Y-%m-%d %H:%M:%S"),
+             as.POSIXct('2018-01-21 00:00:00', format="%Y-%m-%d %H:%M:%S"))
 
 #Distribution for each day in the data, binwidth 600 = 10 min
 filter_data %>%
