@@ -61,32 +61,42 @@ uniq_per_day <- filter_data %>%
   summarise(num = n(),u_num=n_distinct(Address))
 
 #Plot number of unique devices for each day
-ggplot(uniq_per_day, aes(x=as.Date(day),y=u_num,group = Sensor_Code,colour = factor(Sensor_Code)))+
+ggplot(uniq_per_day, aes(x=as.POSIXct(day),y=u_num,group = Sensor_Code,colour = factor(Sensor_Code)))+
   geom_point()+
   geom_line()+
-  scale_x_date(labels = date_format("%d/%m"))+
-  theme(axis.text.x = element_text(angle=90))+
+  scale_x_datetime(labels = date_format("%d/%m"))+
+  theme(axis.text.x = element_text(angle=0))+
   xlab("Day")+
   ylab("Number of Unique Devices")+
   scale_colour_discrete(name  ="Sensor_Code")
 
 #Specify plot time frame
-time_frame=c(as.POSIXct('2018-01-20 00:00:00', format="%Y-%m-%d %H:%M:%S"),
+time_frame=c(as.POSIXct('2018-01-17 00:00:00', format="%Y-%m-%d %H:%M:%S"),
              as.POSIXct('2018-01-21 00:00:00', format="%Y-%m-%d %H:%M:%S"))
 
 #Distribution for each day in the data, binwidth 600 = 10 min
 filter_data %>%
   distinct(Address,.keep_all = TRUE)%>%
-  ggplot(aes(as.POSIXct(TS_PARSED))) +
+  ggplot(aes(as.POSIXct(TS_PARSED),group = Sensor_Code,colour = factor(Sensor_Code))) +
   geom_freqpoly(binwidth = 600)+
-  (scale_x_datetime(limits=time_frame))
+  (scale_x_datetime(limits=time_frame))+
+  scale_colour_discrete(name  ="Sensor_Code")+
+  xlab("Date and Time")+
+  ylab("Count of Unique Pings")
+
 
 #Some kind of distribution over the day for all days in the data
 
 filter_data %>%
   mutate(TS_time = update(as.POSIXct(TS_PARSED), yday = 1)) %>%
   distinct(Address,.keep_all = TRUE)%>%
-  ggplot(aes(TS_time)) +
-  geom_freqpoly(binwidth = 300)
+  ggplot(aes(TS_time,group=Sensor_Code,colour = factor(Sensor_Code))) +
+  geom_freqpoly(binwidth = 600) +
+  scale_x_datetime(labels = date_format("%H:%M"))+
+  scale_colour_discrete(name  ="Sensor_Code")+
+  xlab("Time of Day")+
+  ylab("Count of Unique Pings")
+
 
 autoplot(ts(filter_data$TS_PARSED))
+
