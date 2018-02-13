@@ -1,0 +1,110 @@
+---
+title: "GrowSmarter Sensor Data Overview"
+output: 
+  flexdashboard::flex_dashboard:
+    vertical_layout: scroll
+runtime: shiny
+---
+```{r global, include=FALSE}
+library(shiny)
+library(flexdashboard)
+library(tidyverse)
+library(dplyr)
+library(rmarkdown)
+library(ggplot2)
+library(chorddiag)
+
+# load data in 'global' chunk so it can be shared by all users of the dashboard
+#s200_300<- readr::read_csv("/users/jakob/Documents/R/MasterThesis/Sensor_Data/s200_300_180117_180208.csv", header=c("ID","Sensor_Code","Time","Address","RSSI","OUI","TS_PARSED"))
+s200_300<-read.csv("/users/jakob/Documents/R/MasterThesis/Sensor_Data/s200_300_180117_180208.csv", header=FALSE)
+colnames(s200_300) <- c("ID","Sensor_Code","Time","Address","RSSI","OUI","TS_PARSED")
+#Filter addresses which is not identified 
+filter_data <- s200_300 %>%
+  filter(as.character(OUI) != as.character(Address))
+#Add column with day and hour
+filter_data$day_hr_min <- substr(filter_data$TS_PARSED, 1, 15)
+filter_data$day_hr <- substr(filter_data$TS_PARSED, 1, 13)
+filter_data$day <- substr(filter_data$TS_PARSED, 1, 10)
+
+#Count number of unique devices within each day and hour for the sensors
+uniq_per_day_hour <- filter_data%>% 
+  select(day_hr,Address,Sensor_Code)%>% 
+  group_by(day_hr,Sensor_Code)%>% 
+  summarise(num = n(),u_num=n_distinct(Address))
+
+#Add a column displaying only the hour of the day
+uniq_per_day_hour$h <- substr(uniq_per_day_hour$day_hr,11,13)
+
+#Create standard deviation, mean and confidence 95% for each hour of the day
+mean_sd_num_hr<-uniq_per_day_hour%>%
+  group_by(h,Sensor_Code)%>%
+  summarise(sd = sd(u_num),mean_num = mean(u_num),n=n())%>%
+  mutate(ci = sd/sqrt(n)*qt(0.975,df=n-1))
+
+cross_person <- filter_data%>%
+  group_by(Address)%>%
+  arrange(Time)%>%
+  mutate(prev_sensor = lag(Sensor_Code))%>%
+  group_by(Sensor_Code)%>%
+  na.omit() %>%
+  count(prev_sensor) #creates a data frame with number of transitions
+```
+
+Inputs {.sidebar}
+-----------------------------------------------------------------------
+
+```{r}
+checkboxGroupInput("sensor","Sensors to show",choices = c("200"="200","300"="300"),selected="300")
+             
+checkboxInput("confbars","Confidence interval",TRUE)
+checkboxInput("stdsmooth","Standard deviation region",TRUE)
+
+```
+#Outputs
+
+### Pings for unique devices averaged hourly
+
+```{r}
+renderPlot({
+      #var is connected to var from ui.R, and need numeric since it's a string
+      #bins connected to number of bins the user wants
+      sensorctrl <- input$sensor
+      confctrl <- input$confbars
+      stdctrl <- input$stdsmooth
+      
+      ggplot(subset(mean_sd_num_hr,Sensor_Code %in% c(sensorctrl)), aes(x=h, y=mean_num, colour=factor(Sensor_Code),group=Sensor_Code)) + 
+        geom_errorbar(aes(ymin=mean_num-ci, ymax=mean_num+ci), width=0.5,alpha=1*(confctrl)) +
+        geom_smooth(alpha=0.5*(stdctrl)) +
+        #geom_line() +
+        geom_point() +
+        xlab("Hour") +
+        ylab("Average Number of Unique Devices")+
+        scale_colour_discrete(name  ="Sensor Code")
+    }) 
+```
+
+-----------------------------------------------------------------------
+Inputs {.sidebar}
+
+```{r}
+checkboxGroupInput("sensorschord","Sensors to show",choices = c("200"="200","300"="300"),selected=c("200","300"))
+
+```
+#Outputs
+
+### Chord diagram
+
+```{r}
+renderChorddiag({
+      sensors <- input$sensorschord
+      view_sensors <- cross_person %>%
+        filter(Sensor_Code %in% sensors & prev_sensor %in% sensors)
+      chordMat = matrix(as.numeric(unlist(view_sensors[3])),nrow=length(sensors))
+      dimnames(chordMat) = list(sensors,sensors)
+      
+      #groupColors <- c("#000000", "#FFDD89", "#957244", "#F26223")
+      chorddiag(chordMat, groupnamePadding = 50, margin= 90)
+      })
+```
+
+
