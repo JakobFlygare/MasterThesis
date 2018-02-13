@@ -37,7 +37,7 @@ mean_sd_num_hr<- uniq_per_day_hour%>%
 ggplot(mean_sd_num_hr, aes(x=h, y=mean_num, colour=factor(Sensor_Code),group=Sensor_Code)) + 
   geom_errorbar(aes(ymin=mean_num-ci, ymax=mean_num+ci), width=0.5) +
   geom_smooth()+
-  geom_line() +
+  #geom_line() +
   geom_point() +
   xlab("Hour of the Day") +
   ylab("Average Number of Unique Devices")+
