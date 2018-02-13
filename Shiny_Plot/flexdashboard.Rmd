@@ -1,8 +1,10 @@
 ---
-title: "GrowSmarter Sensor Data Overview"
+title: "Basic Shiny Flexdashboard"
 output: 
   flexdashboard::flex_dashboard:
-    vertical_layout: scroll
+    orientation: rows
+    social: menu
+    source_code: embed
 runtime: shiny
 ---
 ```{r global, include=FALSE}
@@ -48,10 +50,13 @@ cross_person <- filter_data%>%
   group_by(Sensor_Code)%>%
   na.omit() %>%
   count(prev_sensor) #creates a data frame with number of transitions
-```
 
-Inputs {.sidebar}
+#Inputs {.sidebar}
+```
+Row 
+
 -----------------------------------------------------------------------
+### INPUTS
 
 ```{r}
 checkboxGroupInput("sensor","Sensors to show",choices = c("200"="200","300"="300"),selected="300")
@@ -60,10 +65,8 @@ checkboxInput("confbars","Confidence interval",TRUE)
 checkboxInput("stdsmooth","Standard deviation region",TRUE)
 
 ```
-#Outputs
 
 ### Pings for unique devices averaged hourly
-
 ```{r}
 renderPlot({
       #var is connected to var from ui.R, and need numeric since it's a string
@@ -82,18 +85,16 @@ renderPlot({
         scale_colour_discrete(name  ="Sensor Code")
     }) 
 ```
-
------------------------------------------------------------------------
+Row
 Inputs {.sidebar}
-
+-----------------------------------------------------------------------
+### INPUTS
 ```{r}
 checkboxGroupInput("sensorschord","Sensors to show",choices = c("200"="200","300"="300"),selected=c("200","300"))
 
 ```
-#Outputs
 
 ### Chord diagram
-
 ```{r}
 renderChorddiag({
       sensors <- input$sensorschord
